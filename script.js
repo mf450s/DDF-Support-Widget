@@ -1,6 +1,7 @@
 let fm = FileManager.iCloud();
-let ordnername = "Drei Fragezeichen";
+let ordnername = "Die Drei Fragezeichen Cover";
 let ordnerPfad = fm.joinPath(fm.documentsDirectory(), ordnername);
+let shortcutName = "Scriptable: übergebene Folge abspielen";
 
 // Stelle sicher, dass Ordner existiert
 if (!fm.fileExists(ordnerPfad)) {
@@ -8,7 +9,7 @@ if (!fm.fileExists(ordnerPfad)) {
 }
 
 // Alle PNG-Dateien im Ordner sammeln
-let dateien = fm.listContents(ordnerPfad).filter((name) => {
+let dateien = fm.listContents(ordnerPfad).filter(name => {
   let pfad = fm.joinPath(ordnerPfad, name);
   return name.toLowerCase().endsWith(".png") && !fm.isDirectory(pfad);
 });
@@ -30,18 +31,18 @@ let widget = new ListWidget();
 widget.backgroundImage = bild;
 
 // Shortcut-URL setzen (mit Dateiname als input-Parameter)
-let shortcutName = "Scr DDF Folge abspielen"; // Ändern!
-let url =
-  "shortcuts://run-shortcut?name=" +
-  encodeURIComponent(shortcutName) +
-  "&input=" +
-  encodeURIComponent(zufallsDatei);
+let dateiOhneEndung = zufallsDatei.split('.').slice(0, -1).join('.');
+
+let url = "shortcuts://run-shortcut?name=" + encodeURIComponent(shortcutName)
+        + "&input=" + encodeURIComponent(dateiOhneEndung); //anhand von Dateinamen entsprechende Folge abspielen
 
 // Ganz am Ende deines Scripts:
 let scriptName = Script.name(); // Holt den aktuellen Skriptnamen
 let url2 = "scriptable:///run?scriptName=" + encodeURIComponent(scriptName);
+widget.url = url2;
 
-widget.url = url; // aktuell wird url genutzt, nicht url2
+
+widget.url = url;
 
 Script.setWidget(widget);
 Script.complete();
